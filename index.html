@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+  html {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  * {
+    box-sizing: border-box;
+    font-size: 14px;
+  }
+  textarea {
+    width: 100%;
+    resize: none;
+  }
+  .menu-div {
+    height: 32px;
+  }
+  .code-textarea {
+    display: block;
+    flex: 1;
+  }
+  .output-textarea {
+    display: block;
+    height: 70px;
+  }
+</style>
+<div class="menu-div">
+  <button class="parse-button">Parse</button>
+  <a class="download-a" download="test.mid">Download Link</a>
+</div>
+<textarea class="code-textarea"></textarea>
+<textarea readonly class="output-textarea"></textarea>
+<script src="js/main.js"></script>
+<script src="js/parser.js"></script>
+<script src="js/smf.js"></script>
+<script>
+  // [
+  //   ["Program", 1],
+  //   ["Volume", 100],
+  //   ["Panpot", 100], ["Step", 240],
+  //   ["Step", -1920],
+  //   ["Note", "C4", { "Velocity": 100 }], ["Step", 240],
+  //   ["Note", "C4", { "GateTime": 240 }], ["Step", 240],
+  //   ["Note", "G4", { "Velocity": 100 }], ["Step", 240],
+  //   ["Note", "G4", { "GateTime": 240 }], ["Step", 240],
+  //   ["Note", "A4", { "Velocity": 100 }], ["Step", 240],
+  //   ["Note", "A4", { "Velocity": 100 }], ["Step", 240],
+  //   ["Note", "G4", [ "Velocity": 100 }], ["Step", 240],
+  //   ["Note", "G4"], ["Step", 240],
+  //   ["Note", "G4"], ["Step", 240],
+  //   ["Note", "G4"], ["Step", 240],
+  // 
+  //   ["Play", "C4|x| | | | | | | | | | | | |", { "Velocity": 100 }], ["Step", 240],
+  //   ["Play", "C4|-| | | | | | | | | | | | |", { "GateTime": 240 }], ["Step", 240],
+  //   ["Play", "C4|x| | | | | | | | | | | | |", { "Velocity": 100 }], ["Step", 240],
+  //   ["Play", "C4|-| | | | | | | | | | | | |", { "GateTime": 240 }], ["Step", 240],
+  //   ["Play", "C4| | | | | | | |x| | | | | |", { "Velocity": 100 }], ["Step", 240],
+  //   ["Play", "C4| | | | | | | |-| | | | | |", { "GateTime": 240 }], ["Step", 240],
+  //   ["Play", "C4| | | | | | | |x| | | | | |", { "Velocity": 100 }], ["Step", 240],
+  //   ["Play", "C4| | | | | | | |-| | | | | |", { "GateTime": 240 }], ["Step", 240],
+  //   ["Play", "C4| | | | | | | | | |x| | | |", { "Velocity": 100 }], ["Step", 240],
+  //   ["Play", "C4| | | | | | | | | |-| | | |", { "GateTime": 240 }], ["Step", 240],
+  //   ["Play", "C4| | | | | | | | | |x| | | |", { "Velocity": 100 }], ["Step", 240],
+  //   ["Play", "C4| | | | | | | | | |-| | | |", { "GateTime": 240 }], ["Step", 240],
+  //   ["Play", "C4| | | | | | | |x| | | | | |", { "Velocity": 100 }], ["Step", 240],
+  //   ["Play", "C4| | | | | | | | | | | | | |"], ["Step", 240],
+  //   ["Play", "C4| | | | | | | | | | | | | |"], ["Step", 240],
+  //   ["Play", "C4| | | | | | | |-| | | | | |", { "GateTime": 240 }], ["Step", 240],
+  // ]
+</script>
