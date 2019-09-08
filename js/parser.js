@@ -48,7 +48,7 @@ class Parser {
     this._track.addEvent(new Event(this._time, [status, number]));
   }
   _executeNoteCommand(cmdObj) {
-    const noteNumber = parseInt(cmdObj[1]);
+    const noteNumber = this._getNoteNumber(cmdObj[1]);
     const gateTime = (() => {
       if (cmdObj[2] && cmdObj[2]["GateTime"]) {
         return parseInt(cmdObj[2]["GateTime"]);
@@ -65,6 +65,20 @@ class Parser {
     const statusOff = 0x80 + this._channelNumber;
     this._track.addEvent(new Event(this._time, [statusOn, noteNumber, velocity]));
     this._track.addEvent(new Event(this._time + gateTime, [statusOff, noteNumber, velocity]));
+  }
+  _getNoteNumber(arg) {
+    if (typeof arg === 'number') {
+      return arg;
+    }
+    if (typeof arg === 'string') {
+      const str = arg;
+      if (str.length === 2 || str.length === 3) {
+        const letter = str[0];
+        const octave = parseInt(str[str.length - 1])
+        const letterToOffsetTable = { 'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11 };
+        return (octave + 1) * 12 + letterToOffsetTable[letter];
+      }
+    }
   }
   _addEndOfTrackEventIfNeeded() {
     if (this._track) {
