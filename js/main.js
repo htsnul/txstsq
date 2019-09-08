@@ -1,6 +1,7 @@
 const templateCode = `[
   ["Track"],
   ["Channel", 0],
+  ["ProgramChange", 4],
   ["Step", 96],
   ["Note", "C4", { "GateTime": 96, "Velocity": 64 }], ["Step", 96],
   ["Note", "C4", { "GateTime": 96, "Velocity": 64 }], ["Step", 96],
@@ -12,7 +13,7 @@ const templateCode = `[
   ["Step", 96],
   ["Track"],
   ["Channel", 1],
-  ["ProgramChange", 10],
+  ["ProgramChange", 4],
   ["Step", 96],
   ["Note", "C3", { "GateTime": 48, "Velocity": 64 }], ["Step", 48],
   ["Note", "G3", { "GateTime": 48, "Velocity": 64 }], ["Step", 48],
@@ -58,9 +59,12 @@ function onParseAndDownloadButtonClick() {
   const blob = new Blob([uint8Array.buffer], { type: "audio/midi" });
   const fileReader = new FileReader();
   fileReader.onload = () => {
-    const a = document.createElement('a');
+    const a = document.querySelector('.download-a');
     a.download = 'output.mid';
     a.href = fileReader.result;
+    a.innerHTML = a.download;
+    // Firefox cannot download from not-appended element.
+    document.querySelector('.menu-div').append(a);
     a.click();
   }
   fileReader.readAsDataURL(blob);
