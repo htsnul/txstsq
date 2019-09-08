@@ -18,11 +18,11 @@ const templateCode = `[
 `;
 
 onload = () => {
-  document.querySelector('.parse-button').onclick = onParseButtonClick;
+  document.querySelector('.parse-and-download-button').onclick = onParseAndDownloadButtonClick;
   document.querySelector('.code-textarea').value = templateCode;
 }
 
-function onParseButtonClick() {
+function onParseAndDownloadButtonClick() {
   document.querySelector('.output-textarea').innerHTML = '';
   const parser = new Parser();
   let smf = null;
@@ -36,14 +36,17 @@ function onParseButtonClick() {
   const smfBytes = smf.toBytes();
   const uint8Array = new Uint8Array(smfBytes.length);
   uint8Array.set(smfBytes);
-  console.log(Array.from(uint8Array).map(v => v.toString(16)));
-  const file = new File([uint8Array], "test.mid", { type: "audio/midi" });
+  if (0) {
+    console.log(Array.from(uint8Array).map(v => v.toString(16)));
+  }
+  const blob = new Blob([uint8Array.buffer], { type: "audio/midi" });
   const fileReader = new FileReader();
   fileReader.onload = () => {
-    const a = document.querySelector('a');
+    const a = document.createElement('a');
+    a.download = 'output.mid';
     a.href = fileReader.result;
     a.click();
   }
-  fileReader.readAsDataURL(file);
+  fileReader.readAsDataURL(blob);
 }
 

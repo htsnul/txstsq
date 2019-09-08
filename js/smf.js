@@ -19,7 +19,7 @@ class Smf {
     const buf = [];
     // Header Chunk
     {
-      buf.push(...new TextEncoder().encode('MThd'));
+      buf.push(...Array.from('MThd').map(c => c.charCodeAt(0)));
       // length
       buf.push(...uintToBigEndianBytes(4, 6));
       // format
@@ -49,7 +49,7 @@ class Track {
   }
   toBytes() {
     const buf = [];
-    buf.push(...new TextEncoder().encode('MTrk'));
+    buf.push(...Array.from('MTrk').map(c => c.charCodeAt(0)));
     const eventsBytes = this._getEventsBytes();
     buf.push(...uintToBigEndianBytes(4, eventsBytes.length));
     buf.push(...eventsBytes);

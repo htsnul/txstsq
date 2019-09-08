@@ -19,20 +19,20 @@
     resize: none;
   }
   .menu-div {
-    height: 32px;
+    height: 24px;
+  }
+  .menu-div > button {
+    height: 100%;
   }
   .code-textarea {
-    display: block;
     flex: 1;
   }
   .output-textarea {
-    display: block;
     height: 70px;
   }
 </style>
 <div class="menu-div">
-  <button class="parse-button">Parse</button>
-  <a class="download-a" download="test.mid">Download Link</a>
+  <button class="parse-and-download-button">Parse & Download</button>
 </div>
 <textarea class="code-textarea"></textarea>
 <textarea readonly class="output-textarea"></textarea>
