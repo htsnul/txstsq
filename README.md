@@ -1,0 +1,2 @@
+# txstsq
+Text Step Sequencer
