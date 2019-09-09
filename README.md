@@ -1,6 +1,10 @@
 # txstsq
 Text Step Sequencer.
 
+My goal is
+
+* Generate midi file from graphically understandable text file
+
 You can create a midi file from the following text.
 
 ```
