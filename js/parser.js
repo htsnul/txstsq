@@ -9,6 +9,8 @@ class Parser {
     const rootObj = JSON.parse(json);
     for (let cmdObj of rootObj) {
       switch (cmdObj[0]) {
+        case "//":
+          break;
         case "Track":
           this._executeTrackCommand(cmdObj);
           break;
@@ -48,7 +50,7 @@ class Parser {
     this._track.addEvent(new Event(this._time, [status, number]));
   }
   _executeNoteCommand(cmdObj) {
-    const noteNumber = this._getNoteNumber(cmdObj[1]);
+    const noteNumbers = this._getNoteNumbers(cmdObj[1]);
     const gateTime = (() => {
       if (cmdObj[2] && cmdObj[2]["GateTime"]) {
         return parseInt(cmdObj[2]["GateTime"]);
@@ -61,22 +63,45 @@ class Parser {
       }
       return 0;
     })();
-    const statusOn = 0x90 + this._channelNumber;
-    const statusOff = 0x80 + this._channelNumber;
-    this._track.addEvent(new Event(this._time, [statusOn, noteNumber, velocity]));
-    this._track.addEvent(new Event(this._time + gateTime, [statusOff, noteNumber, velocity]));
+    noteNumbers.forEach(noteNumber => {
+      const statusOn = 0x90 + this._channelNumber;
+      const statusOff = 0x80 + this._channelNumber;
+      this._track.addEvent(new Event(this._time, [statusOn, noteNumber, velocity]));
+      this._track.addEvent(new Event(this._time + gateTime, [statusOff, noteNumber, velocity]));
+    });
   }
-  _getNoteNumber(arg) {
+  _getNoteNumbers(arg) {
     if (typeof arg === 'number') {
-      return arg;
+      return [arg];
     }
     if (typeof arg === 'string') {
       const str = arg;
-      if (str.length === 2 || str.length === 3) {
+      if (str.length >= 3) {
         const letter = str[0];
-        const octave = parseInt(str[str.length - 1])
+        const octave = parseInt(str[2])
         const letterToOffsetTable = { 'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11 };
-        return (octave + 1) * 12 + letterToOffsetTable[letter];
+        const baseNoteNumber = (octave + 1) * 12 + letterToOffsetTable[letter];
+        // example: "C 3"
+        if (str.length === 3) {
+          return [baseNoteNumber];
+        }
+        // example: "C 3|x| | | |x|"
+        else if (str.length >= 4 && str.length % 2 == 0) {
+          const noteNum = (str.length - 4) / 2;
+          for (let i = 0; i < noteNum + 1; ++i) {
+            // Check division symbol.
+            if (str[3 + 2 * i] !== '|') {
+              return;
+            }
+          }
+          const noteNumbers = [];
+          for (let i = 0; i < noteNum; ++i) {
+            if (str[4 + 2 * i] === 'x') {
+              noteNumbers.push(baseNoteNumber + i);
+            }
+          }
+          return noteNumbers;
+        }
       }
     }
   }

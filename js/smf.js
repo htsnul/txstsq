@@ -42,7 +42,11 @@ class Track {
     this._events = [];
   }
   addEvent(event) {
-    this._events.push(event);
+    let i = this._events.length - 1;
+    while (i > 0 && this._events[i].time > event.time) {
+      i--;
+    }
+    this._events.splice(i + 1, 0, event);
   }
   addEndOfTrackEvent(time) {
     this.addEvent(new Event(time, [0xff, 0x2f, 0x00]));
