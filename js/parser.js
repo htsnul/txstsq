@@ -42,7 +42,7 @@ class Parser {
     this._channelNumber = number;
   }
   _executeStepCommand(cmdObj) {
-    this._time += parseInt(cmdObj[1]);
+    this._time += cmdObj[1];
   }
   _executeProgramChangeCommand(cmdObj) {
     const status = 0xc0 + this._channelNumber;
@@ -51,23 +51,14 @@ class Parser {
   }
   _executeNoteCommand(cmdObj) {
     const noteNumbers = this._getNoteNumbers(cmdObj[1]);
-    const gateTime = (() => {
-      if (cmdObj[2] && cmdObj[2]["GateTime"]) {
-        return parseInt(cmdObj[2]["GateTime"]);
-      }
-      return 0;
-    })();
-    const velocity = (() => {
-      if (cmdObj[2] && cmdObj[2]["Velocity"]) {
-        return parseInt(cmdObj[2]["Velocity"]);
-      }
-      return 0;
-    })();
+    const velocity = cmdObj[2];
+    const offsetTimeOn = cmdObj[3];
+    const offsetTimeOff = cmdObj[4];
     noteNumbers.forEach(noteNumber => {
       const statusOn = 0x90 + this._channelNumber;
       const statusOff = 0x80 + this._channelNumber;
-      this._track.addEvent(new Event(this._time, [statusOn, noteNumber, velocity]));
-      this._track.addEvent(new Event(this._time + gateTime, [statusOff, noteNumber, velocity]));
+      this._track.addEvent(new Event(this._time + offsetTimeOn, [statusOn, noteNumber, velocity]));
+      this._track.addEvent(new Event(this._time + offsetTimeOff, [statusOff, noteNumber, velocity]));
     });
   }
   _getNoteNumbers(arg) {

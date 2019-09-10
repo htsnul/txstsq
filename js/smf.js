@@ -105,7 +105,7 @@ function deltaTimeToBytes(deltaTime) {
       continue;
     }
     remainder -= quotient * divisor;
-    data.push((remainder > 0 ? 0x80 : 0) + quotient);
+    data.push((i > 0 ? 0x80 : 0) + quotient);
   }
   return data;
 }
