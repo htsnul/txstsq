@@ -76,34 +76,33 @@ class Parser {
     }
     if (typeof arg === 'string') {
       const str = arg;
-      if (str.length >= 3) {
-        const letter = str[0];
-        const octave = parseInt(str[2])
-        const letterToOffsetTable = { 'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11 };
-        const baseNoteNumber = (octave + 1) * 12 + letterToOffsetTable[letter];
-        // example: "C 3"
-        if (str.length === 3) {
-          return [baseNoteNumber];
+      if (2 <= str.length && str.length <= 3) {
+        return [this._getNoteNumber(str)];
+      }
+      // example: "|C 3|x| | | |x|"
+      else if (str[0] === "|") {
+        const items = str.split('|').map(s => s.trim());
+        if (items[0] !== '' || items[items.length - 1] !== '') {
+          return;
         }
-        // example: "C 3|x| | | |x|"
-        else if (str.length >= 4 && str.length % 2 == 0) {
-          const noteNum = (str.length - 4) / 2;
-          for (let i = 0; i < noteNum + 1; ++i) {
-            // Check division symbol.
-            if (str[3 + 2 * i] !== '|') {
-              return;
-            }
+        const baseNoteNumber = this._getNoteNumber(items[1]);
+        const noteNum = items.length - 3;
+        const noteNumbers = [];
+        for (let i = 0; i < noteNum; ++i) {
+          if (items[2 + i] === 'x') {
+            noteNumbers.push(baseNoteNumber + i);
           }
-          const noteNumbers = [];
-          for (let i = 0; i < noteNum; ++i) {
-            if (str[4 + 2 * i] === 'x') {
-              noteNumbers.push(baseNoteNumber + i);
-            }
-          }
-          return noteNumbers;
         }
+        return noteNumbers;
       }
     }
+  }
+  // Example: "C4" -> 60
+  _getNoteNumber(str) {
+    const letter = str[0];
+    const octave = parseInt(str[str.length - 1]);
+    const letterToOffsetTable = { 'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11 };
+    return (octave + 1) * 12 + letterToOffsetTable[letter];
   }
   _addEndOfTrackEventIfNeeded() {
     if (this._track) {
