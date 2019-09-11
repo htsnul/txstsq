@@ -49,7 +49,7 @@ class Track {
     this._events.splice(i + 1, 0, event);
   }
   addEndOfTrackEvent(time) {
-    this.addEvent(new Event(time, [0xff, 0x2f, 0x00]));
+    this.addEvent(Event.createEndOfTrackEvent(time));
   }
   toBytes() {
     const buf = [];
@@ -74,6 +74,12 @@ class Event {
   constructor(time, data) {
     this._time = time;
     this._data = data;
+  }
+  static createSetTempoEvent(time, tempo) {
+    return new Event(time, [0xff, 0x51, 3, ...uintToBigEndianBytes(3, 60 * 1000 * 1000 / tempo)]);
+  }
+  static createEndOfTrackEvent(time) {
+    return new Event(time, [0xff, 0x2f, 0]);
   }
   get time() {
     return this._time;

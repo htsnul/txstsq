@@ -23,20 +23,23 @@ class Parser {
         case "ControlChange":
           this._executeControlChangeCommand(cmdObj);
           break;
+        case "ChannelVolume":
+          this._executeChannelVolumeCommand(cmdObj);
+          break;
+        case "Pan":
+          this._executePanCommand(cmdObj);
+          break;
+        case "Expression":
+          this._executeExpressionCommand(cmdObj);
+          break;
         case "ProgramChange":
           this._executeProgramChangeCommand(cmdObj);
           break;
-        case "ChannelVolume":
-          this._executeControlChangeCommand(["ControlChange", 7, cmdObj[1]]);
-          break;
-        case "Pan":
-          this._executeControlChangeCommand(["ControlChange", 10, cmdObj[1]]);
-          break;
-        case "Expression":
-          this._executeControlChangeCommand(["ControlChange", 11, cmdObj[1]]);
-          break;
         case "Note":
           this._executeNoteCommand(cmdObj);
+          break;
+        case "SetTempo":
+          this._executeSetTempoCommand(cmdObj);
           break;
       }
     }
@@ -62,6 +65,24 @@ class Parser {
     const value = cmdObj[2];
     this._track.addEvent(new Event(this._time, [status, number, value]));
   }
+  _executeChannelVolumeCommand(cmdObj) {
+    const status = 0xb0 + this._channelNumber;
+    const number = 0x07;
+    const value = cmdObj[1];
+    this._track.addEvent(new Event(this._time, [status, number, value]));
+  }
+  _executePanCommand(cmdObj) {
+    const status = 0xb0 + this._channelNumber;
+    const number = 0x0a;
+    const value = cmdObj[1];
+    this._track.addEvent(new Event(this._time, [status, number, value]));
+  }
+  _executeExpressionCommand(cmdObj) {
+    const status = 0xb0 + this._channelNumber;
+    const number = 0x0b;
+    const value = cmdObj[1];
+    this._track.addEvent(new Event(this._time, [status, number, value]));
+  }
   _executeProgramChangeCommand(cmdObj) {
     const status = 0xc0 + this._channelNumber;
     const number = cmdObj[1];
@@ -78,6 +99,9 @@ class Parser {
       this._track.addEvent(new Event(this._time + offsetTimeOn, [statusOn, noteNumber, velocity]));
       this._track.addEvent(new Event(this._time + offsetTimeOff, [statusOff, noteNumber, velocity]));
     });
+  }
+  _executeSetTempoCommand(cmdObj) {
+    this._track.addEvent(Event.createSetTempoEvent(this._time, cmdObj[1]));
   }
   _getNoteNumbers(arg) {
     if (typeof arg === 'number') {

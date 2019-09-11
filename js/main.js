@@ -1,4 +1,6 @@
 const templateCode = `[
+  ["Track"],
+  ["SetTempo", 100],
   ["//", "Channel 0"],
   ["Track"], ["Channel", 0], ["ProgramChange", 4],
   ["ChannelVolume", 127],
