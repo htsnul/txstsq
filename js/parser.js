@@ -38,6 +38,12 @@ class Parser {
         case "Note":
           this._executeNoteCommand(cmdObj);
           break;
+        case "GMSystemOn":
+          this._executeGMSystemOnCommand(cmdObj);
+          break;
+        case "MasterVolume":
+          this._executeMasterVolumeCommand(cmdObj);
+          break;
         case "SetTempo":
           this._executeSetTempoCommand(cmdObj);
           break;
@@ -74,7 +80,7 @@ class Parser {
   _executePanCommand(cmdObj) {
     const status = 0xb0 + this._channelNumber;
     const number = 0x0a;
-    const value = cmdObj[1];
+    const value = 64 + cmdObj[1];
     this._track.addEvent(new Event(this._time, [status, number, value]));
   }
   _executeExpressionCommand(cmdObj) {
@@ -99,6 +105,12 @@ class Parser {
       this._track.addEvent(new Event(this._time + offsetTimeOn, [statusOn, noteNumber, velocity]));
       this._track.addEvent(new Event(this._time + offsetTimeOff, [statusOff, noteNumber, velocity]));
     });
+  }
+  _executeGMSystemOnCommand(cmdObj) {
+    this._track.addEvent(Event.createGMSystemOnEvent(this._time, cmdObj[1], cmdObj[2]));
+  }
+  _executeMasterVolumeCommand(cmdObj) {
+    this._track.addEvent(Event.createMasterVolumeEvent(this._time, cmdObj[1], cmdObj[2]));
   }
   _executeSetTempoCommand(cmdObj) {
     this._track.addEvent(Event.createSetTempoEvent(this._time, cmdObj[1]));

@@ -75,6 +75,15 @@ class Event {
     this._time = time;
     this._data = data;
   }
+  static createGMSystemOnEvent(time) {
+    return new Event(time, [0xf0, 5, 0x7e, 0x7f, 9, 1, 0xf7]);
+  }
+  static createMasterVolumeEvent(time, volumeMsb, volumeLsb) {
+    if (volumeLsb === undefined) {
+      volumeLsb = 0;
+    }
+    return new Event(time, [0xf0, 7, 0x7f, 0x7f, 4, 1, volumeLsb, volumeMsb, 0xf7]);
+  }
   static createSetTempoEvent(time, tempo) {
     return new Event(time, [0xff, 0x51, 3, ...uintToBigEndianBytes(3, 60 * 1000 * 1000 / tempo)]);
   }
