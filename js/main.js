@@ -1,6 +1,8 @@
 const templateCode = `[
   ["//", "Channel 0"],
   ["Track"], ["Channel", 0], ["ProgramChange", 4],
+  ["ChannelVolume", 127],
+  ["Pan", 127],
   ["Step", 96],
   ["//", "0: 0"],
   ["Note", "|C 4|x| | | | | | | | | |", 64, 0, 96], ["Step",  96],
@@ -14,6 +16,8 @@ const templateCode = `[
   ["Note", "|C 4| | | | | | | | | | |", 64, 0, 96], ["Step",  96],
   ["//", "Channel 1"],
   ["Track"], ["Channel", 1], ["ProgramChange", 4],
+  ["ChannelVolume", 127],
+  ["Pan", 0],
   ["Step", 96],
   ["//", "1: 0"],
   ["Note", "|C 3|x| | | |x| | |x| | |", 64, 0, 192], ["Step",  96],

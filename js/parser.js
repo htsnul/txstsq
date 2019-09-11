@@ -20,8 +20,20 @@ class Parser {
         case "Step":
           this._executeStepCommand(cmdObj);
           break;
+        case "ControlChange":
+          this._executeControlChangeCommand(cmdObj);
+          break;
         case "ProgramChange":
           this._executeProgramChangeCommand(cmdObj);
+          break;
+        case "ChannelVolume":
+          this._executeControlChangeCommand(["ControlChange", 7, cmdObj[1]]);
+          break;
+        case "Pan":
+          this._executeControlChangeCommand(["ControlChange", 10, cmdObj[1]]);
+          break;
+        case "Expression":
+          this._executeControlChangeCommand(["ControlChange", 11, cmdObj[1]]);
           break;
         case "Note":
           this._executeNoteCommand(cmdObj);
@@ -44,9 +56,15 @@ class Parser {
   _executeStepCommand(cmdObj) {
     this._time += cmdObj[1];
   }
+  _executeControlChangeCommand(cmdObj) {
+    const status = 0xb0 + this._channelNumber;
+    const number = cmdObj[1];
+    const value = cmdObj[2];
+    this._track.addEvent(new Event(this._time, [status, number, value]));
+  }
   _executeProgramChangeCommand(cmdObj) {
     const status = 0xc0 + this._channelNumber;
-    const number = parseInt(cmdObj[1]);
+    const number = cmdObj[1];
     this._track.addEvent(new Event(this._time, [status, number]));
   }
   _executeNoteCommand(cmdObj) {
