@@ -78,11 +78,8 @@ class Event {
   static createGMSystemOnEvent(time) {
     return new Event(time, [0xf0, 5, 0x7e, 0x7f, 9, 1, 0xf7]);
   }
-  static createMasterVolumeEvent(time, volumeMsb, volumeLsb) {
-    if (volumeLsb === undefined) {
-      volumeLsb = 0;
-    }
-    return new Event(time, [0xf0, 7, 0x7f, 0x7f, 4, 1, volumeLsb, volumeMsb, 0xf7]);
+  static createMasterVolumeEvent(time, volume) {
+    return new Event(time, [0xf0, 7, 0x7f, 0x7f, 4, 1, ...uint14toTwoDataBytes(volume), 0xf7]);
   }
   static createSetTempoEvent(time, tempo) {
     return new Event(time, [0xff, 0x51, 3, ...uintToBigEndianBytes(3, 60 * 1000 * 1000 / tempo)]);
@@ -125,3 +122,16 @@ function deltaTimeToBytes(deltaTime) {
   return data;
 }
 
+function uint14toTwoDataBytes(value) {
+  if (!(0 <= value && value <= 16383)) {
+    throw new RangeError(value);
+  }
+  return [value % 128, Math.floor(value / 128)];
+}
+
+function int14toTwoDataBytes(value) {
+  if (!(-8192 <= value && value <= 8191)) {
+    throw new RangeError(value);
+  }
+  return uint14toTwoDataBytes(8192 + value);
+}

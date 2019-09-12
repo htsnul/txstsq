@@ -110,7 +110,7 @@ class Parser {
     this._track.addEvent(Event.createGMSystemOnEvent(this._time, cmdObj[1], cmdObj[2]));
   }
   _executeMasterVolumeCommand(cmdObj) {
-    this._track.addEvent(Event.createMasterVolumeEvent(this._time, cmdObj[1], cmdObj[2]));
+    this._track.addEvent(Event.createMasterVolumeEvent(this._time, cmdObj[1]));
   }
   _executeSetTempoCommand(cmdObj) {
     this._track.addEvent(Event.createSetTempoEvent(this._time, cmdObj[1]));

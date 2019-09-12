@@ -2,7 +2,7 @@ const templateCode = `[
   ["Track"],
   ["GMSystemOn"],
   ["SetTempo", 100],
-  ["MasterVolume", 127],
+  ["MasterVolume", 16383],
   ["//", "Channel 0"],
   ["Track"], ["Channel", 0], ["ProgramChange", 4],
   ["ChannelVolume", 127],
