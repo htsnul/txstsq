@@ -91,11 +91,15 @@ class Parser {
     const velocity = cmdObj[2];
     const offsetTimeOn = cmdObj[3];
     const offsetTimeOff = cmdObj[4];
+    const statusOn = 0x90 + this._channelNumber;
+    const statusOff = 0x80 + this._channelNumber;
     noteNumbers.forEach(noteNumber => {
-      const statusOn = 0x90 + this._channelNumber;
-      const statusOff = 0x80 + this._channelNumber;
-      this._track.addEvent(new Event(this._time + offsetTimeOn, [statusOn, noteNumber, velocity]));
-      this._track.addEvent(new Event(this._time + offsetTimeOff, [statusOff, noteNumber, velocity]));
+      if (offsetTimeOn !== null) {
+        this._track.addEvent(new Event(this._time + offsetTimeOn, [statusOn, noteNumber, velocity]));
+      }
+      if (offsetTimeOff !== null) {
+        this._track.addEvent(new Event(this._time + offsetTimeOff, [statusOff, noteNumber, velocity]));
+      }
     });
   }
   _executePitchBendChangeCommand(cmdObj) {
@@ -129,7 +133,7 @@ class Parser {
         const noteNum = items.length - 3;
         const noteNumbers = [];
         for (let i = 0; i < noteNum; ++i) {
-          if (items[2 + i] === 'x') {
+          if (items[2 + i] === 'x' || items[2 + i] === '-') {
             noteNumbers.push(baseNoteNumber + i);
           }
         }
