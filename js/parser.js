@@ -141,12 +141,13 @@ class Parser {
   _getNoteNumber(str) {
     const letter = str[0];
     const octave = parseInt(str[str.length - 1]);
+    const sharpOrFlatOffset = (str[1] === '#' ? 1 : 0) + (str[1] === 'b' ? -1 : 0);
     const letterToOffsetTable = { 'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11 };
-    return (octave + 1) * 12 + letterToOffsetTable[letter];
+    return (octave + 1) * 12 + letterToOffsetTable[letter] + sharpOrFlatOffset;
   }
   _addEndOfTrackEventIfNeeded() {
     if (this._track) {
-      this._track.addEndOfTrackEvent(this._time);
+      this._track.addEndOfTrackEvent();
     }
   }
 }

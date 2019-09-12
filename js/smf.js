@@ -51,7 +51,12 @@ class Track {
   addEvents(events) {
     events.forEach(e => this.addEvent(e));
   }
-  addEndOfTrackEvent(time) {
+  addEndOfTrackEvent() {
+    let time = 0;
+    // Always add at the end.
+    if (this._events.length) {
+      time = this._events[this._events.length - 1].time;
+    }
     this.addEvent(Event.createEndOfTrackEvent(time));
   }
   toBytes() {
