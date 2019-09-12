@@ -8,49 +8,36 @@ class Parser {
   parse(json) {
     const rootObj = JSON.parse(json);
     for (let cmdObj of rootObj) {
-      switch (cmdObj[0]) {
-        case "//":
-          break;
-        case "Track":
-          this._executeTrackCommand(cmdObj);
-          break;
-        case "Channel":
-          this._executeChannelCommand(cmdObj);
-          break;
-        case "Step":
-          this._executeStepCommand(cmdObj);
-          break;
-        case "ControlChange":
-          this._executeControlChangeCommand(cmdObj);
-          break;
-        case "ChannelVolume":
-          this._executeChannelVolumeCommand(cmdObj);
-          break;
-        case "Pan":
-          this._executePanCommand(cmdObj);
-          break;
-        case "Expression":
-          this._executeExpressionCommand(cmdObj);
-          break;
-        case "ProgramChange":
-          this._executeProgramChangeCommand(cmdObj);
-          break;
-        case "Note":
-          this._executeNoteCommand(cmdObj);
-          break;
-        case "GMSystemOn":
-          this._executeGMSystemOnCommand(cmdObj);
-          break;
-        case "MasterVolume":
-          this._executeMasterVolumeCommand(cmdObj);
-          break;
-        case "SetTempo":
-          this._executeSetTempoCommand(cmdObj);
-          break;
-      }
+      this._executeCommand(cmdObj);
     }
     this._addEndOfTrackEventIfNeeded();
     return this._smf;
+  }
+  _executeCommand(cmdObj) {
+    if (cmdObj[0] === '//') {
+      return;
+    };
+    const execCmdFunc = this[`_execute${cmdObj[0]}Command`];
+    if (!execCmdFunc) {
+      throw SyntaxError(cmdObj[0]);
+    }
+    execCmdFunc.bind(this)(cmdObj);
+  }
+  _executeAnimateCommand(cmdObj) {
+    const command = cmdObj[1];
+    const valueStart = cmdObj[2];
+    const valueEnd = cmdObj[3];
+    const deltaTime = cmdObj[4];
+    const stepTime = cmdObj[5] ? cmdObj[5] : 1;
+    const lastTime = this._time;
+    for (let dt = 0; dt < deltaTime; dt += stepTime) {
+      this._time = lastTime + dt;
+      const value = Math.round(valueStart + (valueEnd - valueStart) * dt / deltaTime);
+      this._executeCommand([command, value]);
+    }
+    this._time = lastTime + deltaTime;
+    this._executeCommand([command, valueEnd]);
+    this._time = lastTime;
   }
   _executeTrackCommand(cmdObj) {
     this._addEndOfTrackEventIfNeeded();
@@ -105,6 +92,9 @@ class Parser {
       this._track.addEvent(new Event(this._time + offsetTimeOn, [statusOn, noteNumber, velocity]));
       this._track.addEvent(new Event(this._time + offsetTimeOff, [statusOff, noteNumber, velocity]));
     });
+  }
+  _executePitchBendChangeCommand(cmdObj) {
+    this._track.addEvent(Event.createPitchBendChangeEvent(this._time, this._channelNumber, cmdObj[1]));
   }
   _executeGMSystemOnCommand(cmdObj) {
     this._track.addEvent(Event.createGMSystemOnEvent(this._time, cmdObj[1], cmdObj[2]));

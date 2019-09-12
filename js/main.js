@@ -9,6 +9,7 @@ const templateCode = `[
   ["Pan", 32],
   ["Step", 96],
   ["//", "0: 0"],
+  ["Animate", "PitchBendChange", -8192, 0, 24],
   ["Note", "|C 4|x| | | | | | | | | |", 64, 0, 96], ["Step",  96],
   ["Note", "|C 4|x| | | | | | | | | |", 64, 0, 96], ["Step",  96],
   ["Note", "|C 4| | | | | | | |x| | |", 64, 0, 96], ["Step",  96],

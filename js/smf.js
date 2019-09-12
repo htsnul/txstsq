@@ -75,6 +75,10 @@ class Event {
     this._time = time;
     this._data = data;
   }
+  static createPitchBendChangeEvent(time, channel, value) {
+    const status = 0xe0 + channel;
+    return new Event(time, [status, ...int14toTwoDataBytes(value)]);
+  }
   static createGMSystemOnEvent(time) {
     return new Event(time, [0xf0, 5, 0x7e, 0x7f, 9, 1, 0xf7]);
   }
