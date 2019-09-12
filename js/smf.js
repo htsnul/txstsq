@@ -48,6 +48,9 @@ class Track {
     }
     this._events.splice(i + 1, 0, event);
   }
+  addEvents(events) {
+    events.forEach(e => this.addEvent(e));
+  }
   addEndOfTrackEvent(time) {
     this.addEvent(Event.createEndOfTrackEvent(time));
   }
@@ -74,6 +77,14 @@ class Event {
   constructor(time, data) {
     this._time = time;
     this._data = data;
+  }
+  static createPitchBendSensitivityEvents(time, channel, value) {
+    const status = 0xb0 + channel;
+    return [
+      new Event(time, [status, 101, 0]),
+      new Event(time, [status, 100, 0]),
+      new Event(time, [status, 6, value])
+    ];
   }
   static createPitchBendChangeEvent(time, channel, value) {
     const status = 0xe0 + channel;

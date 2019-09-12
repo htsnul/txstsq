@@ -76,6 +76,11 @@ class Parser {
     const value = cmdObj[1];
     this._track.addEvent(new Event(this._time, [status, number, value]));
   }
+  _executePitchBendSensitivityCommand(cmdObj) {
+    this._track.addEvents(
+      Event.createPitchBendSensitivityEvents(this._time, this._channelNumber, cmdObj[1])
+    );
+  }
   _executeProgramChangeCommand(cmdObj) {
     const status = 0xc0 + this._channelNumber;
     const number = cmdObj[1];
