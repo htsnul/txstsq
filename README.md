@@ -1,49 +1,149 @@
 # txstsq
+
 Text Step Sequencer.
 
-My goal is
+## Overview
 
-* Generate midi file from graphically understandable text file
+Our goal is
 
-You can create a midi file from the following text.
+* Generate MIDI file from graphically understandable text file
+
+You can create a MIDI file from the following text.
 
 ```
 [
   ["Track"],
   ["GMSystemOn"],
-  ["SetTempo", 100],
-  ["MasterVolume", 127],
-  ["//", "Channel 0"],
+  ["//", "Right"],
   ["Track"], ["Channel", 0], ["ProgramChange", 4],
-  ["ChannelVolume", 127],
-  ["Pan", 32],
   ["Step", 96],
-  ["//", "0: 0"],
-  ["Note", "|C 4|x| | | | | | | | | |", 64, 0, 96], ["Step",  96],
-  ["Note", "|C 4|x| | | | | | | | | |", 64, 0, 96], ["Step",  96],
-  ["Note", "|C 4| | | | | | | |x| | |", 64, 0, 96], ["Step",  96],
-  ["Note", "|C 4| | | | | | | |x| | |", 64, 0, 96], ["Step",  96],
-  ["//", "0: 1"],
-  ["Note", "|C 4| | | | | | | | | |x|", 64, 0, 96], ["Step",  96],
-  ["Note", "|C 4| | | | | | | | | |x|", 64, 0, 96], ["Step",  96],
-  ["Note", "|C 4| | | | | | | |x| | |", 64, 0, 96], ["Step",  96],
-  ["Note", "|C 4| | | | | | | | | | |", 64, 0, 96], ["Step",  96],
-  ["//", "Channel 1"],
+  ["//", "Right: 0"],
+  ["Note", "|C 4|x| | | | | | | | | |", 64, 96], ["Step",  96],
+  ["Note", "|C 4|x| | | | | | | | | |", 64, 96], ["Step",  96],
+  ["Note", "|C 4| | | | | | | |x| | |", 64, 96], ["Step",  96],
+  ["Note", "|C 4| | | | | | | |x| | |", 64, 96], ["Step",  96],
+  ["//", "Right: 1"],
+  ["Note", "|C 4| | | | | | | | | |x|", 64, 96], ["Step",  96],
+  ["Note", "|C 4| | | | | | | | | |x|", 64, 96], ["Step",  96],
+  ["Note", "|C 4| | | | | | | |v| | |", 64, 96], ["Step",  96],
+  ["Note", "|C 4| | | | | | | |-| | |", 64, 96], ["Step",  96],
+  ["//", "Left"],
   ["Track"], ["Channel", 1], ["ProgramChange", 4],
-  ["ChannelVolume", 127],
-  ["Pan", -32],
   ["Step", 96],
-  ["//", "1: 0"],
-  ["Note", "|C 3|x| | | |x| | |x| | |", 64, 0, 192], ["Step",  96],
-  ["Note", "|C 3| | | | | | | | | | |",  0, 0,   0], ["Step",  96],
-  ["Note", "|C 3|x| | | |x| | |x| | |", 64, 0, 192], ["Step",  96],
-  ["Note", "|C 3| | | | | | | | | | |",  0, 0,   0], ["Step",  96],
-  ["//", "1: 1"],
-  ["Note", "|C 3|x| | | | |x| | | |x|", 64, 0, 192], ["Step",  96],
-  ["Note", "|C 3| | | | | | | | | | |",  0, 0,   0], ["Step",  96],
-  ["Note", "|C 3|x| | | |x| | |x| | |", 64, 0, 192], ["Step",  96],
-  ["Note", "|C 3| | | | | | | | | | |",  0, 0,   0], ["Step",  96],
+  ["//", "Left: 0"],
+  ["Note", "|C 3|v| | | |v| | |v| | |", 64, 96], ["Step",  96],
+  ["Note", "|C 3|-| | | |-| | |-| | |", 64, 96], ["Step",  96],
+  ["Note", "|C 3|v| | | |v| | |v| | |", 64, 96], ["Step",  96],
+  ["Note", "|C 3|-| | | |-| | |-| | |", 64, 96], ["Step",  96],
+  ["//", "Left: 1"],
+  ["Note", "|C 3|v| | | | |v| | | |v|", 64, 96], ["Step",  96],
+  ["Note", "|C 3|-| | | | |-| | | |-|", 64, 96], ["Step",  96],
+  ["Note", "|C 3|v| | | |v| | |v| | |", 64, 96], ["Step",  96],
+  ["Note", "|C 3|-| | | |-| | |-| | |", 64, 96], ["Step",  96],
   ["//"]
 ]
 
 ```
+
+## Original Command Reference
+
+### Comment
+
+Comment.
+
+```
+  ["//"(, <Comment>)],
+```
+
+Example:
+
+```
+  ["//", "Write a description here."],
+```
+
+### Step
+
+Advance current time.
+
+```
+  ["Step", <DeltaTime>],
+```
+
+Example:
+
+```
+  ["Step", 96],
+```
+
+### Note
+
+Note on or off.
+
+```
+  ["Note", <Note(s)>, <Velocity>, <OffsetTimeOff>(, <OffsetTimeOn>)],
+```
+
+* Velocity: 0 - 127
+* Symbol in table
+  * "x": Note On and Off
+  * "v": Note On only
+  * "-": Note Off only
+
+Example:
+
+```
+  ["Note", "|C 4|v| | | |x| | | |", 64, 96], ["Step",  96],
+  ["Note", "|C 4| | | | | | | |x|", 64, 96], ["Step",  96],
+  ["Note", "|C 4| | | | |x| | | |", 64, 96], ["Step",  96],
+  ["Note", "|C 4|-| | | | | | |x|", 64, 96], ["Step",  96],
+```
+
+### Channel
+
+Set current channel.
+
+```
+  ["Channel", <Number>],
+```
+
+Example:
+
+```
+  ["Channel", 3],
+```
+
+### Animate
+
+Execute command with continuous change.
+
+```
+  ["Animate", <CommandName>, <ValueStart>, <ValueEnd>, <DeltaTime>(, <StepTime>)],
+```
+
+Example:
+
+```
+  ["Animate", "PitchBendChange", -8192, 0, 96],
+```
+
+## MIDI Command Reference
+
+### Track
+
+### ControlChange
+
+### ChannelVolume
+
+### Pan
+
+### Expression
+
+### PitchBendSensitivity
+
+### GMSystemOn
+
+### MasterVolume
+
+### SetTempo
+
+

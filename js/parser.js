@@ -89,16 +89,17 @@ class Parser {
   _executeNoteCommand(cmdObj) {
     const noteNumbers = this._getNoteNumbers(cmdObj[1]);
     const velocity = cmdObj[2];
-    const offsetTimeOn = cmdObj[3];
-    const offsetTimeOff = cmdObj[4];
+    const offsetTimeOff = cmdObj[3];
+    const offsetTimeOn = cmdObj[4] ? cmdObj[4] : 0;
     const statusOn = 0x90 + this._channelNumber;
     const statusOff = 0x80 + this._channelNumber;
     noteNumbers.forEach(noteNumber => {
-      if (offsetTimeOn !== null) {
-        this._track.addEvent(new Event(this._time + offsetTimeOn, [statusOn, noteNumber, velocity]));
+      const number = noteNumber.number;
+      if (noteNumber.on) {
+        this._track.addEvent(new Event(this._time + offsetTimeOn, [statusOn, number, velocity]));
       }
-      if (offsetTimeOff !== null) {
-        this._track.addEvent(new Event(this._time + offsetTimeOff, [statusOff, noteNumber, velocity]));
+      if (noteNumber.off) {
+        this._track.addEvent(new Event(this._time + offsetTimeOff, [statusOff, number, velocity]));
       }
     });
   }
@@ -116,12 +117,12 @@ class Parser {
   }
   _getNoteNumbers(arg) {
     if (typeof arg === 'number') {
-      return [arg];
+      return [{ number: arg, on: true, off: true }];
     }
     if (typeof arg === 'string') {
       const str = arg;
       if (2 <= str.length && str.length <= 3) {
-        return [this._getNoteNumber(str)];
+        return [{ number: this._getNoteNumber(str), on: true, off: true }];
       }
       // example: "|C 3|x| | | |x|"
       else if (str[0] === "|") {
@@ -133,8 +134,19 @@ class Parser {
         const noteNum = items.length - 3;
         const noteNumbers = [];
         for (let i = 0; i < noteNum; ++i) {
-          if (items[2 + i] === 'x' || items[2 + i] === '-') {
-            noteNumbers.push(baseNoteNumber + i);
+          const symbol = items[2 + i];
+          let on = false;
+          let off = false;
+          if (symbol === 'x') {
+            on = true;
+            off = true;
+          } else if (symbol === 'v') {
+            on = true;
+          } else if (symbol === '-') {
+            off = true;
+          }
+          if (on || off) {
+            noteNumbers.push({ number: baseNoteNumber + i, on, off });
           }
         }
         return noteNumbers;
